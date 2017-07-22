@@ -43,7 +43,11 @@ public class MainScreen extends State {
 			if (Keyboard.next() || Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
 				running = false;
 				transfer = true;
+				orange.a = 1;
 				tick.playAsSoundEffect(1.0f, 1.0f, false);
+				Graphics.clear();
+				Graphics.drawString("Loading...", Traveler.papyrus, orange, 900, 625);
+				Display.update();
 				break;
 			}
 			

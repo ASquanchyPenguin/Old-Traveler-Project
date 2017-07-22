@@ -1,7 +1,6 @@
 package miller.traveler.state;
 
 import org.lwjgl.opengl.Display;
-import org.newdawn.slick.Color;
 
 import miller.traveler.Graphics;
 import miller.traveler.Traveler;
@@ -13,30 +12,16 @@ public class Game extends State {
 	}
 
 	@Override
-	public void start() {
-		Color orange = new Color(1, 0.47f, 0);
-		Display.setTitle("Traveler | FPS: Calculating... | Current Time: 0");
-		
+	public void start() {		
 		//TODO: Add code here to load before the game begins.
 		running = true;
-		this.startClock();		
-				
-		while (!(fps >= 60)) {
-			updateFPS(false);
-			
-			Graphics.clear();
-			Graphics.drawString("Loading...", Traveler.papyrus, orange, 900, 625);
-			
-			Display.update();
-		}
-		
 		run();
 	}
 
 	@Override
 	public void run() {
-		this.resetClock();
-		
+		this.startClock();
+				
 		while (running) {
 			if (Display.isCloseRequested()) {
 				running = false;
@@ -44,6 +29,7 @@ public class Game extends State {
 			}
 			
 			Graphics.clear();
+			
 			updateFPS(true);
 			
 			Display.update();
