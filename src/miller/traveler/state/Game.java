@@ -21,7 +21,7 @@ public class Game extends State {
 	@Override
 	public void run() {
 		this.startClock();
-				
+		
 		while (running) {
 			if (Display.isCloseRequested()) {
 				running = false;
@@ -29,7 +29,6 @@ public class Game extends State {
 			}
 			
 			Graphics.clear();
-			
 			updateFPS(true);
 			
 			Display.update();
@@ -48,5 +47,4 @@ public class Game extends State {
 	public void transfer() {
 		
 	}
-
 }
