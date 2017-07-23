@@ -1,4 +1,4 @@
-package miller.traveler.state.tiles;
+package miller.traveler.tiles;
 
 import java.io.File;
 import java.io.FileNotFoundException;
