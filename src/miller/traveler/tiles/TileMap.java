@@ -50,6 +50,13 @@ public class TileMap {
 		generateMapFromFile(folder, name);
 	}
 	
+	/**Returns the Tile currently being drawn at the specified location.
+	 * @param x the x-position of the tile
+	 * @param y the y-position of the tile */
+	public Tile getTileAt(float x, float y) {
+		return map[(int)(x / 32)][(int) y / 32];
+	}
+	
 	/**Generates a map from a text file.
 	 * @param folder the folder containing the text-document and tiles folder
 	 * @param name the name of the text-document
