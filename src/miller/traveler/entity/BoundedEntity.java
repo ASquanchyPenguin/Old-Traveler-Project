@@ -103,4 +103,12 @@ public abstract class BoundedEntity extends Entity {
 	public float getDY() {
 		return dy;
 	}
+	
+	public void setDX(float dx) {
+		this.dx = dx;
+	}
+	
+	public void setDY(float dy) {
+		this.dy = dy;
+	}
 }

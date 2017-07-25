@@ -35,6 +35,8 @@ public class Game extends State {
 			e.printStackTrace();
 		}
 		
+		int dt;
+		
 		while (running) {
 			if (Display.isCloseRequested()) {
 				running = false;
@@ -43,7 +45,11 @@ public class Game extends State {
 			
 			Graphics.clear();
 			updateFPS(true);
-			player.update(getDelta());
+			dt = getDelta();
+			
+			player.pollInput(dt);
+			map.followEntity(player, dt);
+			player.update(dt);
 			map.renderMap();
 			player.render();
 			

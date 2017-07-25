@@ -36,9 +36,7 @@ public class Player extends LivingEntity {
 		float adjustedSpeed = (speed * delta);
 		boolean next = Keyboard.next();
 		
-		if (!lock) {
-			index = 0;
-		}
+		index = 0;
 		
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			isFacingLeft = false;
@@ -72,7 +70,7 @@ public class Player extends LivingEntity {
 				dy = -adjustedSpeed;
 				currentJumps--;
 			} else if (isJumping && currentJumps > 0) {
-				dy -= adjustedSpeed;
+				dy -= (adjustedSpeed / 2);
 				currentJumps--;
 			}
 		} else if (y >= 656) {
@@ -97,9 +95,7 @@ public class Player extends LivingEntity {
 	}
 	
 	@Override
-	public void update(int delta) {
-		pollInput(delta);
-		
+	public void update(int delta) {		
 		x += dx;
 		y += dy;
 	}

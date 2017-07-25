@@ -6,7 +6,9 @@ import java.util.Scanner;
 
 import org.newdawn.slick.opengl.Texture;
 
+import miller.traveler.Graphics;
 import miller.traveler.Traveler;
+import miller.traveler.entity.LivingEntity;
 
 public class TileMap {
 
@@ -167,24 +169,33 @@ public class TileMap {
 	 *          the map. 
 	 * <br><br>
 	 * @param delta the time passed between frames */
-	public void followEntity(float x, float y, float dx, float dy, int delta) {
+	public void followEntity(LivingEntity e, int delta) {
+		float x = e.getX();
+		float y = e.getY();
+		float dx = e.getDX();
+		float dy = e.getDY();
+		
 		float xabs = Math.abs(x - Traveler.WIDTH / 2);
 		float yabs = Math.abs(y - Traveler.HEIGHT / 2);
 		
-		if (isRowLocked()) {
-			x += dx;
-		} 
-		
-		if (isColumnLocked()) {
-			y += dy;
-		}
+		Graphics.drawString("dx/delta=" + dx/delta, 32, 32);
 		
 		if (xabs > 1 && xabs < 16) {
 			rowMin += (dx / delta);
+			e.setDX(0);
 		}
 		
 		if (yabs > 1 && yabs < 16) {
 			colMin += (dx / delta);
+			e.setDY(0);
+		}
+		
+		if (isRowLocked()) {
+			e.setDX(dx);
+		} 
+		
+		if (isColumnLocked()) {
+			e.setDY(dy);
 		}
 		
 		validateBounds();
