@@ -1,9 +1,13 @@
 package miller.traveler.state;
 
+import java.io.FileNotFoundException;
+
 import org.lwjgl.opengl.Display;
 
 import miller.traveler.Graphics;
 import miller.traveler.Traveler;
+import miller.traveler.entity.Player;
+import miller.traveler.tiles.TileMap;
 
 public class Game extends State {
 	
@@ -22,6 +26,15 @@ public class Game extends State {
 	public void run() {
 		this.startClock();
 		
+		Player player = new Player(32, 656);
+		TileMap map = null;
+		
+		try {
+			map = new TileMap("res/maps/basic/", "test.txt");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		while (running) {
 			if (Display.isCloseRequested()) {
 				running = false;
@@ -30,6 +43,9 @@ public class Game extends State {
 			
 			Graphics.clear();
 			updateFPS(true);
+			player.update(getDelta());
+			map.renderMap();
+			player.render();
 			
 			Display.update();
 			Display.sync(60);

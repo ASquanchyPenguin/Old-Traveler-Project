@@ -48,7 +48,12 @@ public abstract class BoundedEntity extends Entity {
 	/**Apply friction (from the ground) to the BoundedEntity. */
 	public void applyFriction(float friction) {
 		if (!isFalling && Math.abs(dx) > 0) {
-			dx -= Math.copySign(friction, dx);
+			//Fixes the sliding issue when dx is small
+			if (Math.abs(dx) < 0.15f) {
+				dx = 0;
+			} else {
+				dx -= Math.copySign(friction, dx);
+			}
 		}
 	}
 	
@@ -89,5 +94,13 @@ public abstract class BoundedEntity extends Entity {
 		} else {
 			return (rectangle.intersects(e.rectangle));
 		}
+	}
+	
+	public float getDX() {
+		return dx;
+	}
+	
+	public float getDY() {
+		return dy;
 	}
 }
