@@ -73,11 +73,7 @@ public class SpriteSheet {
 		
 		glDisable(GL_TEXTURE_2D);
 	}
-	
-	public void reset() {
-		currentFrame = 0;
-	}
-	
+
 	public void tick() {
 		if (++totalFrames % delay == 0) {
 			if (++currentFrame >= frames) {
@@ -87,6 +83,11 @@ public class SpriteSheet {
 	}
 	
 	public boolean hasCompletedAnimation() {
-		return (currentFrame + 1 >= frames);
+		if (currentFrame + 1 >= frames) {
+			currentFrame = 0;
+			return true;
+		} else {
+			return false;
+		}	
 	}
 }

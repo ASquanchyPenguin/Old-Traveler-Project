@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 import org.newdawn.slick.opengl.Texture;
 
-import miller.traveler.Graphics;
 import miller.traveler.Traveler;
 import miller.traveler.entity.LivingEntity;
 
@@ -161,6 +160,7 @@ public class TileMap {
 		}
 	}
 	
+
 	/**Moves the TileMap in such a way that it renders around a single entity.
 	 * <br><br>
 	 * ***<strong>Note</strong>: This function will be updated when Entities are created.
@@ -177,9 +177,7 @@ public class TileMap {
 		
 		float xabs = Math.abs(x - Traveler.WIDTH / 2);
 		float yabs = Math.abs(y - Traveler.HEIGHT / 2);
-		
-		Graphics.drawString("dx/delta=" + dx/delta, 32, 32);
-		
+				
 		if (xabs > 1 && xabs < 16) {
 			rowMin += (dx / delta);
 			e.setDX(0);

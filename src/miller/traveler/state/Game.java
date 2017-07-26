@@ -26,7 +26,7 @@ public class Game extends State {
 	public void run() {
 		this.startClock();
 		
-		Player player = new Player(32, 656);
+		Player player = new Player(32, 643);
 		TileMap map = null;
 		
 		try {
@@ -34,6 +34,8 @@ public class Game extends State {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		player.setMap(map);
 		
 		int dt;
 		
@@ -48,7 +50,7 @@ public class Game extends State {
 			dt = getDelta();
 			
 			player.pollInput(dt);
-			map.followEntity(player, dt);
+//			map.followEntity(player, dt);
 			player.update(dt);
 			map.renderMap();
 			player.render();

@@ -4,106 +4,151 @@ import org.lwjgl.input.Keyboard;
 
 import miller.traveler.SpriteSheet;
 import miller.traveler.Traveler;
+import miller.traveler.tiles.TileType;
 import miller.traveler.world.World;
 
 public class Player extends LivingEntity {
 
 	private SpriteSheet[] sheets;
 	
-	private int index;
-	private int currentJumps;
+	private boolean[] keys;
+	
+	private int action;
+	private int jumps;
 	private int maxJumps;
 	
 	private boolean isFacingLeft;
 	private boolean isJumping;
 	private boolean isRolling;
-	private boolean lock;
 	
 	public Player(float x, float y) {
 		super(x, y, 32, 64);
 		
 		this.sheets = loadSheets();
-		this.index = 0;
+		this.keys = new boolean[64];
+		this.action = 0;
+		this.jumps = 0;
 		this.maxJumps = 2;
-		this.currentJumps = maxJumps;
 		this.isFacingLeft = false;
-		this.isJumping = false;
 		this.isRolling = false;
-		this.lock = false;
+		this.isJumping = false;
+	}
+	
+	private void updateKeys() {
+		for (int i = 0; i < keys.length; i++) {
+			if (Keyboard.isKeyDown(i)) {
+				keys[i] = true;
+			} else {
+				keys[i] = false;
+			}
+		}
 	}
 	
 	public void pollInput(int delta) {
+		updateKeys();
+		
 		float adjustedSpeed = (speed * delta);
 		boolean next = Keyboard.next();
 		
-		index = 0;
+		//Prevent other animation when these are active.
+		if (isRolling && isJumping) {
+			action = 3;
+			isRolling = !sheets[3].hasCompletedAnimation();
+			return;
+		} else if (isRolling) {
+			isRolling = !sheets[3].hasCompletedAnimation();
+			return;
+		} 
+				
+		if (!next) {
+			action = 0;
+		}
 		
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		dx = 0;
+		
+		//Walking
+		 if (keys[Keyboard.KEY_D]) {
 			isFacingLeft = false;
 			dx = adjustedSpeed;
-			index = 1;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			action = 1;
+		} else if (keys[Keyboard.KEY_A]) {
 			isFacingLeft = true;
 			dx = -adjustedSpeed;
-			index = 1;
-		} else {
-			applyFriction(World.GROUND_FRICTION);
-			index = (dx == 0) ? 0 : 2;
-		}
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			index = 4;
-		}
-		
-		if (next && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
-			isRolling = true;
-		} else if (sheets[3].hasCompletedAnimation()) {
-			sheets[3].reset();
-			isRolling = false;
-		}
-		
-		if (next && Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			isFalling = true;
-			
-			if (!isJumping) {
-				isJumping = true;
-				dy = -adjustedSpeed;
-				currentJumps--;
-			} else if (isJumping && currentJumps > 0) {
-				dy -= (adjustedSpeed / 2);
-				currentJumps--;
-			}
-		} else if (y >= 656) {
-			isJumping = false;
-			isFalling = false;
-			currentJumps = maxJumps;
-			y = 656;
-			dy = 0;
-		} else {
-			applyGravity(World.GRAVITY);
-		}
-		
-		//Since rolling and jumping are locked, we need to check
-		//if they are active to properly render.
-		if (isJumping && isRolling) {
-			index = 3;
-		} else if (isJumping) {
-			index = 2;
-		} else if (isRolling) {
-			index = 3;
+			action = 1;
 		} 
+		 
+		//Crouching
+		if (keys[Keyboard.KEY_S] || keys[Keyboard.KEY_SPACE]) {
+			action = 4;
+			dx = 0;
+		}
+		
+		//Jumping
+		if (next && keys[Keyboard.KEY_W]) {
+			if (!isJumping) {
+				dy = -adjustedSpeed * 1.35f;
+				isFalling = true;
+				isJumping = true;
+				action = 2;
+				jumps++;
+			} else if (isJumping && (jumps < maxJumps)) {
+				dy -= (adjustedSpeed / 2);
+				jumps++;
+			}
+		}
+		
+		//While jumping and pluging
+		if (isJumping && keys[Keyboard.KEY_SPACE]) {
+			action = 4;
+			dy = (adjustedSpeed * 3.5f);
+		} else if (isJumping) {
+			action = 2;
+		}
+		
+		//Backstep and Rolling
+		if (next && keys[Keyboard.KEY_LCONTROL]) {
+			if (keys[Keyboard.KEY_D]) {
+				dx = isJumping ? adjustedSpeed : (adjustedSpeed * 2);
+				isRolling = true;
+				action = 3;
+			} else if (keys[Keyboard.KEY_A]) {
+				dx = isJumping ? -adjustedSpeed : -(adjustedSpeed * 2);
+				isRolling = true;
+				action = 3;
+			} else {
+				if (!isJumping) {
+					dx = isFacingLeft ? 10 : -10;
+					action = 2;
+				}
+			}
+		}
 	}
 	
 	@Override
-	public void update(int delta) {		
+	public void update(int delta) {
+		if (getBottomTile().getType() == TileType.BLANK) {
+			isFalling = true;
+			applyGravity(World.GRAVITY);
+		} else if (isFalling) {
+			if (getBottomTile().getType() != TileType.BLANK) {
+				dy = 0;
+				isFalling = false;
+				if (isJumping) {
+					isJumping = false;
+					jumps = 0;
+				}
+			}
+		}
+						
 		x += dx;
 		y += dy;
 	}
 	
 	@Override
 	public void render() {
-		sheets[index].play(isFacingLeft, x, y);
+		sheets[action].play(isFacingLeft, x, y);
 	}
+	
 	
 	public SpriteSheet[] loadSheets() {
 		SpriteSheet[] sheets = new SpriteSheet[] {
@@ -115,9 +160,5 @@ public class Player extends LivingEntity {
 		};
 		
 		return sheets;
-	}
-	
-	public boolean hasNextAnimation() {
-		return (index > 0);
 	}
 }

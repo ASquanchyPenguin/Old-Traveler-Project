@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 
 import org.newdawn.slick.opengl.Texture;
 
+import miller.traveler.tiles.Tile;
+import miller.traveler.tiles.TileMap;
 import miller.traveler.world.World;
 
 /**A BoundedEntity is an Entity that moves with the map. They are movable Entities that
@@ -11,6 +13,7 @@ import miller.traveler.world.World;
 public abstract class BoundedEntity extends Entity {
 	
 	protected Rectangle rectangle;
+	protected TileMap map;
 	
 	protected float speed;
 	protected float dx;
@@ -64,6 +67,22 @@ public abstract class BoundedEntity extends Entity {
 		}
 	}
 	
+	public Tile getBottomTile() {
+		return (map.getTileAt((x + dx) - (width / 2), (y + dy) + (height / 2)));
+	}
+	
+	public Tile getLeftTile() {
+		return (map.getTileAt((x + dx) - (width * 1.5f), (y + dy)));
+	}
+	
+	public Tile getRightTile() {
+		return (map.getTileAt((x + dx) - (width / 2), (y + dy)));
+	}
+	
+	public Tile getUpperTile() {
+		return (map.getTileAt((x + dx) - (width / 2), (y + dy) - height));
+	}
+	
 	public void update(int delta) {
 		
 	}
@@ -95,20 +114,60 @@ public abstract class BoundedEntity extends Entity {
 			return (rectangle.intersects(e.rectangle));
 		}
 	}
-	
+
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
+	public void setRectangle(Rectangle rectangle) {
+		this.rectangle = rectangle;
+	}
+
+	public TileMap getMap() {
+		return map;
+	}
+
+	public void setMap(TileMap map) {
+		this.map = map;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
+	}
+
 	public float getDX() {
 		return dx;
 	}
-	
-	public float getDY() {
-		return dy;
-	}
-	
+
 	public void setDX(float dx) {
 		this.dx = dx;
 	}
-	
+
+	public float getDY() {
+		return dy;
+	}
+
 	public void setDY(float dy) {
 		this.dy = dy;
+	}
+
+	public boolean ignoreCollision() {
+		return ignoreCollision;
+	}
+
+	public void ignoreCollision(boolean ignoreCollision) {
+		this.ignoreCollision = ignoreCollision;
+	}
+
+	public boolean isFalling() {
+		return isFalling;
+	}
+
+	public void setFalling(boolean isFalling) {
+		this.isFalling = isFalling;
 	}
 }
